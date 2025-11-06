@@ -52,7 +52,6 @@ desktop.ini
 *_resampled.wav
 
 # Test files
-test_*.py
 test_*.wav
 
 # Distribution / packaging
