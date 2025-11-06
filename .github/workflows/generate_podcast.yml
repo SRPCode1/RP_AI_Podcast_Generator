@@ -149,9 +149,48 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: 📧 Send notification email
+      - name: � Post success comment (GitHub Notification)
         if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runNumber = context.runNumber;
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+            const releaseUrl = `${{ github.server_url }}/${{ github.repository }}/releases/tag/podcast-${runNumber}`;
+            const downloadUrl = `${{ github.server_url }}/${{ github.repository }}/releases/download/podcast-${runNumber}/Podcast_Audio_full.wav`;
+            
+            const body = `## 🎙️ Podcast Episode ${runNumber} Generated Successfully!
+            
+            ### 📊 Statistics
+            - **Chunks**: ${{ steps.metadata.outputs.chunk_count }}
+            - **Duration**: ~${{ steps.metadata.outputs.duration_min }} minutes
+            - **File Size**: ${{ steps.metadata.outputs.file_size }}
+            - **Model**: Gemini 2.5 Flash TTS
+            - **Voices**: Sulafat & Sadachbia
+            
+            ### 🔗 Download
+            **[📥 Download Podcast](${downloadUrl})**
+            
+            ### 📋 Links
+            - [📦 Release Page](${releaseUrl})
+            - [📊 Workflow Run](${runUrl})
+            
+            ---
+            *Generated automatically by RP AI Podcast Generator*`;
+            
+            // Create issue for notification
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `✅ Podcast #${runNumber} Ready - ${new Date().toISOString().split('T')[0]}`,
+              body: body,
+              labels: ['podcast-ready', 'automated']
+            });
+      
+      - name: 📧 Send email notification (fallback)
+        if: success() && secrets.SMTP_HOST != ''
         uses: dawidd6/action-send-mail@v3
+        continue-on-error: true
         with:
           server_address: ${{ secrets.SMTP_HOST }}
           server_port: ${{ secrets.SMTP_PORT }}
