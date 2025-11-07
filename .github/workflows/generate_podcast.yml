@@ -188,7 +188,7 @@ jobs:
             });
       
       - name: 📧 Send email notification (fallback)
-        if: success() && secrets.SMTP_HOST != ''
+        if: success()
         uses: dawidd6/action-send-mail@v3
         continue-on-error: true
         with:
