@@ -1,9 +1,11 @@
-Style: Quick API test
+Style: Permission test
 
 Speakers: Technical
 
-Speaker 1: This is a test via Git push.
+Speaker 1: Testing after permissions fix at 2025-11-07 08:58:35.
 
-Speaker 2: It should trigger automatically.
+Speaker 2: This should now create a Release successfully.
 
-Speaker 1: Let's see if it works now!
+Speaker 1: And also create a GitHub Issue notification!
+
+Speaker 2: Let's verify the complete workflow.
